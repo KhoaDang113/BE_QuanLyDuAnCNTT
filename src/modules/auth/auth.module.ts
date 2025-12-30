@@ -12,7 +12,7 @@ import { RefreshTokenModule } from '../refresh-tokens/refresh-token.module';
 import { VerificationModule } from '../verification/verification.module';
 import { SmsModule } from '../../shared/sms/sms.module';
 import { ChatModule } from '../chat/chat.module';
-
+// Làm phân quyền admin, staff, user
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -32,4 +32,4 @@ import { ChatModule } from '../chat/chat.module';
   ],
   exports: [AuthService, CustomJwtService, EmailVerifiedGuard, UserInfoGuard],
 })
-export class AuthModule {}
+export class AuthModule { }

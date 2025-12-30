@@ -30,7 +30,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly assignment: AssignmentService,
-  ) {}
+  ) { }
 
   @Public()
   @Post('register-email')
@@ -72,7 +72,7 @@ export class AuthController {
   async verifyEmail(@Body() verifyDto: VerifyEmailDto) {
     return this.authService.verifyEmailOtp(verifyDto.email, verifyDto.code);
   }
-
+  // Phân quyền admin, staff, user
   @Public()
   @Post('register-phone')
   async registerPhone(@Body() registerDto: RegisterPhoneDto) {

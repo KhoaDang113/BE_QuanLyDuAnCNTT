@@ -29,7 +29,7 @@ const OTP_TTL_MIN = 5;
 const OTP_LEN = 6;
 const OTP_SALT_ROUNDS = 10;
 const RESEND_WINDOW_SEC = 60;
-
+// Làm phân quyền admin, staff, user
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,7 +43,7 @@ export class AuthService {
     private smsService: SmsService,
     private verificationService: VerificationService,
     private mailer: MailerService,
-  ) {}
+  ) { }
 
   private async sendEmailOtp(email: string, code: string) {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
