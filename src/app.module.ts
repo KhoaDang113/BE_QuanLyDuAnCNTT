@@ -32,6 +32,7 @@ import { ShipperModule } from './modules/shipper/shipper.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
+        //config connect mongodb
         const uri = configService.get<string>('MONGODB_URI');
         return {
           uri: uri,
