@@ -14,8 +14,8 @@ export class StatsService {
     private readonly productModel: Model<ProductDocument>,
     @InjectModel(User.name)
     private readonly userModel: Model<UserDocument>,
-  ) {}
-
+  ) { }
+  // commit head
   // Dashboard statistics for admin
   async getDashboardStats(): Promise<{
     totalUsers: number;

@@ -8,4 +8,5 @@ export class CreatePaymentDto {
   @IsNotEmpty()
   @IsEnum(['momo', 'vnpay'])
   payment_method: 'momo' | 'vnpay';
+  // payment_method: 'momo' | 'vnpay';
 }

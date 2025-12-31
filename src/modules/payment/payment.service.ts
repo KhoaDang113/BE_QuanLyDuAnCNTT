@@ -20,6 +20,7 @@ import { Order, OrderDocument } from '../order/schema/order.schema';
 
 @Injectable()
 export class PaymentService {
+  // contructor
   constructor(
     @InjectModel(PaymentTransaction.name)
     private readonly paymentTransactionModel: Model<PaymentTransactionDocument>,
@@ -27,8 +28,17 @@ export class PaymentService {
     private readonly orderModel: Model<OrderDocument>,
     @InjectConnection() private readonly connection: Connection,
     private readonly mailerService: MailerService,
-  ) {}
+  ) { }
 
+  // private readonly vnpay = new VNPay({
+  //   tmnCode: process.env.VNPAY_TMN_CODE as string,
+  //   secureSecret: process.env.VNPAY_SECURE_SECRET as string,
+  //   vnpayHost: process.env.VNPAY_HOST as string,
+  //   testMode: true,
+  //   hashAlgorithm: HashAlgorithm.SHA512,
+  //   enableLog: true,
+  //   loggerFn: ignoreLogger,
+  // });
   private readonly vnpay = new VNPay({
     tmnCode: process.env.VNPAY_TMN_CODE as string,
     secureSecret: process.env.VNPAY_SECURE_SECRET as string,

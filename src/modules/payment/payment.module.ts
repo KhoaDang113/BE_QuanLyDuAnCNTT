@@ -16,8 +16,9 @@ import { MailerModule } from 'src/shared/mailer/mailer.module';
     ]),
     MailerModule,
   ],
+  // module này chứa các controller và service để xử lý các giao dịch thanh toán
   controllers: [PaymentController],
   providers: [PaymentService],
   exports: [PaymentService],
 })
-export class PaymentModule {}
+export class PaymentModule { }

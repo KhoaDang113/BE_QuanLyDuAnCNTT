@@ -7,4 +7,5 @@ export class UpdateOrderStatusDto {
   @IsOptional()
   @IsString()
   cancel_reason?: string;
+  // cancel_reason?: string;
 }

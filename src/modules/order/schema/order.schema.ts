@@ -13,6 +13,7 @@ export class OrderItem {
 
   @Prop({ type: Number, required: true })
   unit_price: number;
+  // unit_price: number;
 
   @Prop({ type: Number, default: 0 })
   discount_percent: number;
@@ -41,7 +42,7 @@ export class Order {
   items: OrderItem[];
 
   @Prop({
-    enum: ['pending', 'confirmed','assigned', 'shipped', 'delivered', 'cancelled'],
+    enum: ['pending', 'confirmed', 'assigned', 'shipped', 'delivered', 'cancelled'],
     default: 'pending',
   })
   status: string;

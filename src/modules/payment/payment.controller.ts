@@ -17,8 +17,19 @@ import { type QueryDrResponseFromVNPay } from 'vnpay/types-only';
 
 @Controller('payments')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
-
+  constructor(private readonly paymentService: PaymentService) { }
+  // Tạo giao dịch thanh toán
+  // @Post('create-payment')
+  // async createPaymentTransaction(
+  //   @Body() body: CreatePaymentDto,
+  //   @Req() req: Request,
+  // ) {
+  //   const userId = req.user?.id as string;
+  //   if (!userId) {
+  //     throw new UnauthorizedException('User not found');
+  //   }
+  //   return await this.paymentService.createPaymentTransaction(body, userId);
+  // }
   @Post('create-payment')
   async createPaymentTransaction(
     @Body() body: CreatePaymentDto,

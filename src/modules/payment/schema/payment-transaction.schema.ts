@@ -10,6 +10,9 @@ export class PaymentTransaction {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   user_id: Types.ObjectId;
 
+  // @Prop({ required: true, type: Types.ObjectId, ref: 'Order' })
+  // orderId: Types.ObjectId;
+
   @Prop({ required: true, type: Types.ObjectId, ref: 'Order' })
   orderId: Types.ObjectId;
 

@@ -29,6 +29,8 @@ import { StatsService } from './service/stats.service';
     RealtimeModule,
     NotificationModule,
     DistanceModule,
+    // NotificationModule,
+    // DistanceModule,
   ],
   controllers: [OrderController],
   providers: [OrderService, OrderProcessor, StatsService],

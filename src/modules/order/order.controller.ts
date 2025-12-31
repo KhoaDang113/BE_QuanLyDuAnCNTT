@@ -27,6 +27,40 @@ export class OrderController {
     private readonly statsService: StatsService,
   ) { }
 
+  // @Post()
+  // async createOrder(
+  //   @Body() createOrderDto: CreateOrderDto,
+  //   @Req() req: Request,
+  // ) {
+  //   const userId = req.user?.id as string;
+  //   if (!userId) {
+  //     throw new UnauthorizedException('User not found');
+  //   }
+  //   const job = await this.orderQueue.add(
+  //     'create-order',
+  //     {
+  //       userId,
+  //       createOrderDto,
+  //     },
+  //     {
+  //       attempts: 3,
+  //       backoff: {
+  //         type: 'exponential',
+  //         delay: 2000,
+  //       },
+  //       removeOnComplete: 100,
+  //       removeOnFail: 500,
+  //     },
+  //   );
+
+  //   return {
+  //     success: true,
+  //     message: 'Order is being processed',
+  //     jobId: job.id,
+  //     estimatedTime: '5-10 seconds',
+  //   };
+  // }
+
   @Post()
   async createOrder(
     @Body() createOrderDto: CreateOrderDto,
