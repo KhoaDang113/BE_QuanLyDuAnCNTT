@@ -23,7 +23,7 @@ import { GetCategoryProductsDto } from '../dto/get-category-products.dto';
 
 @Controller('products')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   @UseGuards(AdminGuard)
   @Get('products-admin')
@@ -46,6 +46,19 @@ export class ProductController {
       dto.sortOrder,
     );
   }
+
+  // @Public()
+  // @Get('search')
+  // async searchProducts(@Query() dto: SearchProductsDto): Promise<any> {
+  //   const skip = dto.skip ?? 0;
+  //   return await this.productService.searchProducts(
+  //     dto.key,
+  //     skip,
+  //     dto.category,
+  //     dto.brand,
+  //     dto.sortOrder,
+  //   );
+  // }
 
   @Public()
   @Get('category')

@@ -22,8 +22,9 @@ export class ProductService {
     @InjectModel(Brand.name)
     private brandModel: Model<BrandDocument>,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
+  // Lấy danh sách sản phẩm
   async getProductsAdmin(page: number = 0, limit: number = 10): Promise<any> {
     const skip = (page - 1) * limit;
     const products: Product[] = await this.productModel
@@ -403,6 +404,40 @@ export class ProductService {
 
     return relatedProducts;
   }
+
+  // async getRelatedProducts(
+  //   productId: string,
+  //   limit: number = 5,
+  // ): Promise<Product[]> {
+  //   const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+  //   if (!objectIdRegex.test(productId)) {
+  //     throw new BadRequestException('Invalid product id');
+  //   }
+
+  //   const currentProduct = await this.productModel
+  //     .findOne({ _id: productId, is_active: true, is_deleted: false })
+  //     .select('category_id')
+  //     .lean();
+
+  //   if (!currentProduct) {
+  //     throw new NotFoundException('Product not found');
+  //   }
+
+  //   const relatedProducts = await this.productModel
+  //     .find({
+  //       category_id: currentProduct.category_id,
+  //       _id: { $ne: productId },
+  //       is_active: true,
+  //       is_deleted: false,
+  //     })
+  //     .select(
+  //       '_id name slug unit unit_price image_primary discount_percent final_price stock_status quantity',
+  //     )
+  //     .limit(limit)
+  //     .lean();
+
+  //   return relatedProducts;
+  // }
 
   async getProductPromotionByCategorySlugOrAll(
     categorySlug?: string,

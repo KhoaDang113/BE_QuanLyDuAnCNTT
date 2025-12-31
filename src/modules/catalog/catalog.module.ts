@@ -21,14 +21,8 @@ import { Brand, BrandSchema } from './schema/brand.schema';
 import { Rating, RatingSchema } from './schema/rating.schema';
 import { RatingService } from './service/rating.service';
 import { RatingController } from './controller/rating.controller';
-import { Combo, ComboSchema } from './schema/combo.schema';
-import { ComboService } from './service/combo.service';
-import { ComboController } from './controller/combo.controller';
 import { BrandService } from './service/brand.service';
 import { BrandController } from './controller/brand.controller';
-import { TypeCombo, TypeComboSchema } from './schema/type-combo.schema';
-import { TypeComboService } from './service/type-combo.service';
-import { TypeComboController } from './controller/type-combo.controller';
 
 @Module({
   imports: [
@@ -40,8 +34,6 @@ import { TypeComboController } from './controller/type-combo.controller';
       { name: Banner.name, schema: BannerSchema },
       { name: Brand.name, schema: BrandSchema },
       { name: Rating.name, schema: RatingSchema },
-      { name: Combo.name, schema: ComboSchema },
-      { name: TypeCombo.name, schema: TypeComboSchema },
     ]),
   ],
   controllers: [
@@ -50,9 +42,7 @@ import { TypeComboController } from './controller/type-combo.controller';
     CartController,
     BannerController,
     RatingController,
-    ComboController,
     BrandController,
-    TypeComboController,
   ],
   providers: [
     ProductService,
@@ -61,9 +51,7 @@ import { TypeComboController } from './controller/type-combo.controller';
     CartService,
     BannerService,
     RatingService,
-    ComboService,
     BrandService,
-    TypeComboService, 
   ],
   exports: [
     ProductService,
@@ -71,9 +59,8 @@ import { TypeComboController } from './controller/type-combo.controller';
     CartService,
     BannerService,
     RatingService,
-    ComboService,
     BrandService,
-    TypeComboService, 
   ],
 })
-export class CatalogModule {}
+export class CatalogModule { }
+
