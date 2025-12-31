@@ -21,4 +21,19 @@ import { Module } from '@nestjs/common';
   providers: [InventoryService],
   exports: [InventoryService],
 })
-export class InventoryModule {}
+export class InventoryModule { }
+
+
+// @Module({
+//   imports: [
+//     MongooseModule.forFeature([
+//       { name: Product.name, schema: ProductSchema },
+//       { name: InventoryTransaction.name, schema: InventoryTransactionSchema },
+//     ]),
+//     RealtimeModule,
+//   ],
+//   controllers: [InventoryController],
+//   providers: [InventoryService],
+//   exports: [InventoryService],
+// })
+// export class InventoryModule {}

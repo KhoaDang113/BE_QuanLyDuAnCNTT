@@ -11,7 +11,7 @@ import {
   InventoryTransactionDocument,
 } from './schema/inventory-transaction.schema';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
-
+//Đây là service để thay đổi số lượng tồn kho
 @Injectable()
 export class InventoryService {
   constructor(
@@ -20,7 +20,7 @@ export class InventoryService {
     @InjectModel(InventoryTransaction.name)
     private inventoryTransactionModel: Model<InventoryTransactionDocument>,
     private readonly realtimeGateway: RealtimeGateway,
-  ) {}
+  ) { }
 
   private ensureObjectId(id: string, label = 'id'): Types.ObjectId {
     if (!Types.ObjectId.isValid(id)) {
@@ -56,6 +56,51 @@ export class InventoryService {
       );
     }
   }
+
+  // @Injectable()
+  // export class InventoryService {
+  //   constructor(
+  //     @InjectModel(Product.name)
+  //     private productModel: Model<ProductDocument>,
+  //     @InjectModel(InventoryTransaction.name)
+  //     private inventoryTransactionModel: Model<InventoryTransactionDocument>,
+  //     private readonly realtimeGateway: RealtimeGateway,
+  //   ) {}
+
+  //   private ensureObjectId(id: string, label = 'id'): Types.ObjectId {
+  //     if (!Types.ObjectId.isValid(id)) {
+  //       throw new BadRequestException(`Invalid ${label}`);
+  //     }
+  //     return new Types.ObjectId(id);
+  //   }
+
+  //   private async updateStockStatus(
+  //     productId: Types.ObjectId,
+  //     session?: ClientSession,
+  //   ): Promise<void> {
+  //     const product = await this.productModel
+  //       .findById(productId)
+  //       .session(session || null);
+  //     if (!product) return;
+
+  //     let newStatus: 'in_stock' | 'out_of_stock' | 'preorder' = 'in_stock';
+
+  //     if (product.quantity === 0) {
+  //       newStatus = 'out_of_stock';
+  //     } else if (product.stock_status === 'preorder' && product.quantity > 0) {
+  //       newStatus = 'preorder';
+  //     }
+
+  //     if (product.stock_status !== newStatus) {
+  //       await this.productModel.findByIdAndUpdate(
+  //         productId,
+  //         {
+  //           stock_status: newStatus,
+  //         },
+  //         { session: session || undefined },
+  //       );
+  //     }
+  //   }
 
   async importInventory(
     productId: string,

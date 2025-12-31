@@ -5,7 +5,8 @@ import {
   Min,
   IsOptional,
 } from 'class-validator';
-
+//Đây là DTO để thay đổi số lượng tồn kho
+//đây class InventoryOperationDto
 export class InventoryOperationDto {
   @IsNotEmpty()
   @IsString()

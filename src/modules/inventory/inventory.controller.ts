@@ -15,9 +15,10 @@ import {
 } from './dto/inventory-operation.dto';
 import { AdminGuard } from '../../common/guards/admin.guard';
 
+//Đây là controller để thay đổi số lượng tồn kho
 @Controller('inventory')
 export class InventoryController {
-  constructor(private readonly inventoryService: InventoryService) {}
+  constructor(private readonly inventoryService: InventoryService) { }
 
   @Post('import')
   @UseGuards(AdminGuard)
@@ -39,6 +40,7 @@ export class InventoryController {
     };
   }
 
+  //Đây là endpoint để xuất hàng
   @Post('export')
   @UseGuards(AdminGuard)
   async exportInventory(
@@ -60,6 +62,8 @@ export class InventoryController {
     };
   }
 
+  //Đây là endpoint để điều chỉnh số lượng tồn kho
+
   @Post('adjust')
   @UseGuards(AdminGuard)
   async adjustInventory(@Body() dto: AdjustInventoryDto, @Req() req: Request) {
@@ -77,6 +81,23 @@ export class InventoryController {
     };
   }
 
+  // @Post('adjust')
+  // @UseGuards(AdminGuard)
+  // async adjustInventory(@Body() dto: AdjustInventoryDto, @Req() req: Request) {
+  //   const userId = req.user?.id as string;
+  //   const transaction = await this.inventoryService.adjustInventory(
+  //     dto.product_id,
+  //     dto.new_quantity,
+  //     userId,
+  //     dto.note,
+  //   );
+  //   return {
+  //     success: true,
+  //     message: 'Inventory adjusted successfully',
+  //     transaction,
+  //   };
+  // }
+  //Đây là endpoint để lấy số lượng tồn kho của sản phẩm
   @Get('product/:productId')
   @UseGuards(AdminGuard)
   async getProductInventory(@Param('productId') productId: string) {
