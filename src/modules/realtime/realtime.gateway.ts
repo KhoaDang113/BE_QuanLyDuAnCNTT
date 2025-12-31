@@ -21,8 +21,7 @@ import { CustomJwtService } from '../auth/customJwt.service';
   namespace: '/',
 })
 export class RealtimeGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(RealtimeGateway.name);
 
   @WebSocketServer() io: Server;
@@ -30,7 +29,7 @@ export class RealtimeGateway
   constructor(
     private readonly customJwtService: CustomJwtService,
     private readonly configService: ConfigService,
-  ) {}
+  ) { }
 
   async handleConnection(client: Socket) {
     try {
@@ -81,13 +80,6 @@ export class RealtimeGateway
         await client.join('all-staff'); // Join vào room chung cho tất cả staff
         this.logger.log(
           `Socket ${client.id} also joined staff:${userId} and all-staff room`,
-        );
-      }
-      if (payload.role === 'shipper' || payload.type === 'shipper') {
-        await client.join(`shipper:${userId}`);
-        await client.join('all-shippers'); // Join vào room chung cho tất cả shipper
-        this.logger.log(
-          `Socket ${client.id} also joined shipper:${userId} and all-shippers room`,
         );
       }
       if (payload.role === 'admin' || payload.type === 'admin') {
@@ -150,17 +142,6 @@ export class RealtimeGateway
     this.logger.debug(`Emitted '${event}' to all-staff`);
   }
 
-  // Emit to all shippers
-  emitToAllShippers(event: string, payload: any) {
-    this.io.to('all-shippers').emit(event, payload);
-    this.logger.debug(`Emitted '${event}' to all-shippers`);
-  }
-
-  emitToShipper(shipperId: string, event: string, payload: any) {
-    this.io.to(`shipper:${shipperId}`).emit(event, payload);
-    this.logger.debug(`Emitted '${event}' to shipper:${shipperId}`);
-  }
-
   async emitToAllStaffExcept(
     excludeStaffId: string,
     event: string,
@@ -190,8 +171,7 @@ export class RealtimeGateway
       );
     } catch (err) {
       this.logger.error(
-        `emitToAllStaffExcept error: ${
-          err instanceof Error ? err.message : String(err)
+        `emitToAllStaffExcept error: ${err instanceof Error ? err.message : String(err)
         }`,
       );
     }

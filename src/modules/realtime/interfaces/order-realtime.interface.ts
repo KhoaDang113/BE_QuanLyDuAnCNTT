@@ -50,13 +50,6 @@ export interface NewOrderPayload {
 }
 
 
-export interface NewOrderToShipperPayload {
-  shipperId: string;
-  orderId: string;
-  message: string;
-  order: any;
-}
-
 export interface OrderUpdatedPayload {
   orderId: string;
   previousStatus: string;

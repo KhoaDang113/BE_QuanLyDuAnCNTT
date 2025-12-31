@@ -11,8 +11,6 @@ import { OrderProcessor } from './queue/order.processor';
 import { RealtimeModule } from '../realtime/realtime.module';
 import { NotificationModule } from '../notification/notification.module';
 import { User, UserSchema } from '../users/schemas/user.schema';
-import { AssignOrderService } from './service/assign-order.service';
-import { Shipper, ShipperSchema } from '../shipper/schema/shipper.schema';
 import { DistanceModule } from '../distance/distance.module';
 import { StatsService } from './service/stats.service';
 
@@ -23,7 +21,6 @@ import { StatsService } from './service/stats.service';
       { name: Product.name, schema: ProductSchema },
       { name: Address.name, schema: AddressSchema },
       { name: User.name, schema: UserSchema },
-      { name: Shipper.name, schema: ShipperSchema },
     ]),
     BullModule.registerQueue({
       name: 'order-queue',
@@ -34,7 +31,7 @@ import { StatsService } from './service/stats.service';
     DistanceModule,
   ],
   controllers: [OrderController],
-  providers: [OrderService, OrderProcessor, AssignOrderService, StatsService],
-  exports: [OrderService, AssignOrderService, StatsService],
+  providers: [OrderService, OrderProcessor, StatsService],
+  exports: [OrderService, StatsService],
 })
-export class OrderModule {}
+export class OrderModule { }

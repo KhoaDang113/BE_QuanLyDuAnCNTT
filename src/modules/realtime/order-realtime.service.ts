@@ -5,13 +5,12 @@ import {
   OrderSuccessPayload,
   OrderErrorPayload,
   NewOrderPayload,
-  NewOrderToShipperPayload, 
   OrderUpdatedPayload
 } from './interfaces/order-realtime.interface';
 
 @Injectable()
 export class OrderRealtimeService {
-  constructor(private readonly rt: RealtimeGateway) {}
+  constructor(private readonly rt: RealtimeGateway) { }
 
   // Notifications for customers
   orderProcessing(userId: string, data: OrderProcessingPayload) {
@@ -32,9 +31,5 @@ export class OrderRealtimeService {
 
   newOrderToStaff(data: NewOrderPayload) {
     this.rt.emitToAllStaff('order:new', data);
-  }
-
-  newOrderToShipper(data: NewOrderToShipperPayload) {
-    this.rt.emitToShipper(data.shipperId, 'order:new', data);
   }
 }

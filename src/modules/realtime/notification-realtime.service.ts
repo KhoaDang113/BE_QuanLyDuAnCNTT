@@ -8,7 +8,7 @@ import {
 
 @Injectable()
 export class NotificationRealtimeService {
-  constructor(private readonly rt: RealtimeGateway) {}
+  constructor(private readonly rt: RealtimeGateway) { }
 
   // Gửi thông báo realtime cho 1 user cụ thể
   notifyUser(userId: string, data: NotificationPayload) {
@@ -52,11 +52,6 @@ export class NotificationRealtimeService {
     } else {
       this.rt.emitToAllStaff('staff:order-updated', data);
     }
-  }
-
-  // Thông báo cho tất cả shipper khi có cập nhật trạng thái
-  notifyOrderStatusUpdatedByShipperToStaff(data: OrderStatusUpdatedPayload) {
-    this.rt.emitToAllStaff('shipper:order-updated', data);
   }
 
   // Thông báo cho customer khi staff cập nhật đơn hàng

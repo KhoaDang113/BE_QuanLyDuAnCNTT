@@ -13,8 +13,6 @@ import { CreateOrderDto } from '../dto/create-order.dto';
 import { InventoryService } from '../../inventory/inventory.service';
 import { OrderRealtimeService } from '../../realtime/order-realtime.service';
 import { NotificationRealtimeService } from '../../realtime/notification-realtime.service';
-import { ShipperRealtimeService } from '../../realtime/shipper-realtime.service';
-import { AssignOrderService } from './assign-order.service';
 import { DistanceCalculationService } from '../../distance/distance-calculation.service';
 
 @Injectable()
@@ -30,10 +28,8 @@ export class OrderService {
     private readonly inventoryService: InventoryService,
     private readonly orderRealtimeService: OrderRealtimeService,
     private readonly notificationRealtimeService: NotificationRealtimeService,
-    private readonly shipperRealtimeService: ShipperRealtimeService,
-    private readonly assignOrderService: AssignOrderService,
     private readonly distanceCalculationService: DistanceCalculationService,
-  ) {}
+  ) { }
 
   private ensureObjectId(id: string, label = 'id'): Types.ObjectId {
     if (!Types.ObjectId.isValid(id)) {
@@ -419,8 +415,6 @@ export class OrderService {
       message: 'Đơn hàng của bạn đã được xác nhận',
       timestamp: new Date(),
     });
-
-    this.assignOrderService.sendOrderToShipper(orderId);
 
     return result;
   }

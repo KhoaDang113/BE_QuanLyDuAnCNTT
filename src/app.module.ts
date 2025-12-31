@@ -21,7 +21,6 @@ import { RedisModule } from './shared/redis/redis.module';
 import { MailerModule } from './shared/mailer/mailer.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { OrderRatingModule } from './modules/order-rating/order-rating.module';
-import { ShipperModule } from './modules/shipper/shipper.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -81,7 +80,6 @@ import { ShipperModule } from './modules/shipper/shipper.module';
     RedisModule,
     MailerModule,
     OrderRatingModule,
-    ShipperModule,
   ],
   providers: [
     {
@@ -90,4 +88,4 @@ import { ShipperModule } from './modules/shipper/shipper.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
