@@ -19,8 +19,12 @@ export class CategoryService {
     @InjectModel(Product.name)
     private productModel: Model<ProductDocument>,
     private readonly cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
+  /**
+   * Lấy tất cả category và sub-category
+   * Trả về danh sách category cha kèm theo danh sách subCategories
+   */
   async findAll(): Promise<Category[]> {
     const parentCategories = await this.categoryModel
       .find({
@@ -49,6 +53,10 @@ export class CategoryService {
     return categoryWithsubCategories;
   }
 
+  /**
+   * Tìm category theo ID
+   * @param id ID của category
+   */
   async findById(id: string): Promise<Category> {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid category ID');
@@ -66,6 +74,10 @@ export class CategoryService {
     return category;
   }
 
+  /**
+   * Tìm category theo Slug
+   * @param slug Slug của category
+   */
   async findBySlug(slug: string): Promise<Category> {
     const category = await this.categoryModel
       .findOne({ slug, is_deleted: false })
@@ -79,6 +91,10 @@ export class CategoryService {
     return category;
   }
 
+  /**
+   * Tìm các category con của một parentId
+   * @param parentId ID của category cha
+   */
   async findChildren(parentId: string): Promise<Category[]> {
     if (!Types.ObjectId.isValid(parentId)) {
       throw new BadRequestException('Invalid parent ID');
@@ -89,6 +105,9 @@ export class CategoryService {
       .exec();
   }
 
+  /**
+   * Tìm các category gốc (không có parent)
+   */
   async findRootCategories(): Promise<Category[]> {
     return this.categoryModel
       .find({
@@ -98,6 +117,11 @@ export class CategoryService {
       .exec();
   }
 
+  /**
+   * Kiểm tra slug đã tồn tại chưa
+   * @param slug Slug cần kiểm tra
+   * @param excludeId ID cần loại trừ (nếu đang update)
+   */
   async checkSlugExists(slug: string, excludeId?: string): Promise<boolean> {
     const query: Record<string, any> = {
       slug,
@@ -112,6 +136,11 @@ export class CategoryService {
     return !!existing;
   }
 
+  /**
+   * Tạo mới category
+   * @param createCategoryDto Dữ liệu tạo mới
+   * @param file File ảnh upload lên Cloudinary
+   */
   async create(
     createCategoryDto: CreateCategoryDto,
     file: Express.Multer.File,
@@ -170,6 +199,12 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Cập nhật category
+   * @param id ID category
+   * @param updateCategoryDto Dữ liệu cập nhật
+   * @param file File ảnh mới (nếu có)
+   */
   async update(
     id: string,
     updateCategoryDto: UpdateCategoryDto,
@@ -255,6 +290,11 @@ export class CategoryService {
     }
   }
 
+  /**
+   * Xóa category (soft delete)
+   * Không thể xóa nếu có category con
+   * @param id ID category
+   */
   async delete(id: string): Promise<{ message: string }> {
     if (!Types.ObjectId.isValid(id)) {
       throw new BadRequestException('Invalid category ID');
@@ -283,9 +323,10 @@ export class CategoryService {
 
     return { message: 'Category deleted successfully' };
   }
-  
+
   /**
-   * Đếm số sản phẩm trong danh mục
+   * Đếm số lượng sản phẩm của category
+   * @param id ID category
    */
   async getProductCount(id: string): Promise<{ count: number }> {
     if (!Types.ObjectId.isValid(id)) {
@@ -301,7 +342,9 @@ export class CategoryService {
   }
 
   /**
-   * Xóa danh mục và tất cả sản phẩm trong đó
+   * Xóa category và tất cả sản phẩm trong đó (soft delete cả 2)
+   * Vẫn check nếu có sub-category thì chặn xóa
+   * @param id ID category
    */
   async deleteWithProducts(id: string): Promise<{ message: string; deletedProductsCount: number }> {
     if (!Types.ObjectId.isValid(id)) {
@@ -342,6 +385,12 @@ export class CategoryService {
     };
   }
 
+  /**
+   * Lấy danh sách category cho admin với phân trang và tìm kiếm
+   * @param page Trang hiện tại
+   * @param limit Số item/trang
+   * @param key Keyword tìm kiếm
+   */
   async getCategoriesAdmin(
     page: number = 1,
     limit: number = 10,
