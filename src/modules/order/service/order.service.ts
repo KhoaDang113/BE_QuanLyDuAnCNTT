@@ -83,7 +83,6 @@ export class OrderService {
       const product = products.find(
         (p) => p._id.toString() === item.product_id,
       );
-
       if (!product) {
         throw new NotFoundException(`Product ${item.product_id} not found`);
       }
@@ -178,7 +177,6 @@ export class OrderService {
         is_company_invoice: isCompanyInvoice,
         invoice_info: isCompanyInvoice ? createOrderDto.invoice_info : null,
       });
-
       const savedOrder = await order.save({ session });
 
       const orderId = savedOrder._id.toString();
@@ -394,7 +392,6 @@ export class OrderService {
     if (!result) {
       throw new NotFoundException('Order not found after confirmation');
     }
-
     // Thông báo cho các staff khác (trừ staff vừa xác nhận)
     await this.notificationRealtimeService.notifyOrderStatusUpdated(staffId, {
       orderId,
@@ -414,6 +411,15 @@ export class OrderService {
       newStatus: 'confirmed',
       message: 'Đơn hàng của bạn đã được xác nhận',
       timestamp: new Date(),
+    });
+
+    this.orderRealtimeService.orderUpdated(userId, {
+      orderId,
+      previousStatus,
+      newStatus: 'confirmed',
+      message: 'Đơn hàng của bạn đã được xác nhận',
+      timestamp: new Date(),
+      order: result,
     });
 
     return result;
@@ -471,6 +477,15 @@ export class OrderService {
       newStatus: 'shipped',
       message: 'Đơn hàng của bạn đang được giao',
       timestamp: new Date(),
+    });
+
+    this.orderRealtimeService.orderUpdated(userId, {
+      orderId,
+      previousStatus,
+      newStatus: 'shipped',
+      message: 'Đơn hàng của bạn đang được giao',
+      timestamp: new Date(),
+      order: result,
     });
 
     return result;
@@ -532,6 +547,15 @@ export class OrderService {
       timestamp: new Date(),
     });
 
+    this.orderRealtimeService.orderUpdated(userId, {
+      orderId,
+      previousStatus,
+      newStatus: 'delivered',
+      message: 'Đơn hàng của bạn đã được giao thành công',
+      timestamp: new Date(),
+      order: result,
+    });
+
     return result;
   }
 
@@ -584,7 +608,6 @@ export class OrderService {
       await order.save({ session });
 
       await session.commitTransaction();
-
       const result = await this.orderModel
         .findById(orderId)
         .populate('address_id')
