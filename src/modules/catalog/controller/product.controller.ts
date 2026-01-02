@@ -34,16 +34,27 @@ export class ProductController {
     return this.productService.getProductsAdmin(page, limit);
   }
 
-  @Public()
+  // API TÌM KIẾM SẢN PHẨM
+  // Endpoint: GET /products/search
+  // Tham số query:
+  //   - key (bắt buộc): Từ khóa tìm kiếm theo tên sản phẩm
+  //   - skip (không bắt buộc): Số sản phẩm bỏ qua để phân trang
+  //   - category (không bắt buộc): Slug của danh mục để lọc
+  //   - brand (không bắt buộc): Slug của thương hiệu để lọc
+  //   - sortOrder (không bắt buộc): Thứ tự sắp xếp (price-asc, price-desc, hot, new)
+  // Trả về: Danh sách sản phẩm phù hợp với từ khóa và các bộ lọc
+  @Public() // Cho phép truy cập công khai, không cần đăng nhập
   @Get('search')
   async searchProducts(@Query() dto: SearchProductsDto): Promise<any> {
+    // Nếu skip không được truyền, mặc định là 0 (bắt đầu từ sản phẩm đầu tiên)
     const skip = dto.skip ?? 0;
+    // Gọi service để xử lý logic tìm kiếm sản phẩm
     return await this.productService.searchProducts(
-      dto.key,
-      skip,
-      dto.category,
-      dto.brand,
-      dto.sortOrder,
+      dto.key,      // Từ khóa tìm kiếm
+      skip,         // Số sản phẩm bỏ qua
+      dto.category, // Bộ lọc danh mục
+      dto.brand,    // Bộ lọc thương hiệu
+      dto.sortOrder,// Thứ tự sắp xếp
     );
   }
 

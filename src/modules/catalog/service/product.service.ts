@@ -46,6 +46,15 @@ export class ProductService {
     };
   }
 
+  // HÀM TÌM KIẾM SẢN PHẨM
+  // Mô tả: Tìm kiếm sản phẩm theo từ khóa với các bộ lọc và sắp xếp
+  // Tham số:
+  //   - key: Từ khóa tìm kiếm (tìm theo tên sản phẩm)
+  //   - skip: Số sản phẩm bỏ qua (phân trang)
+  //   - category: Slug danh mục để lọc (có thể nhiều slug cách nhau bằng dấu cách)
+  //   - brand: Slug thương hiệu để lọc (có thể nhiều slug cách nhau bằng dấu cách)
+  //   - sortOrder: Thứ tự sắp xếp (price-asc, price-desc, hot, new)
+  // Trả về: Đối tượng chứa danh sách sản phẩm, tổng số, và thông tin danh mục/thương hiệu liên quan
   async searchProducts(
     key: string | undefined,
     skip: number,
@@ -53,35 +62,47 @@ export class ProductService {
     brand?: string,
     sortOrder?: string,
   ): Promise<any> {
+    // Thiết lập số lượng sản phẩm trả về:
+    // - Nếu là trang đầu tiên (skip = 0): trả về 40 sản phẩm
+    // - Các trang sau: trả về 10 sản phẩm
     const actualLimit: number = skip === 0 ? 40 : 10;
 
+    // Bộ lọc cơ bản: chỉ lấy sản phẩm chưa bị xóa và đang hoạt động
     const filters: Record<string, any> = { is_deleted: false, is_active: true };
-    let categories;
-    let brands;
+    let categories; // Danh sách danh mục liên quan đến kết quả tìm kiếm
+    let brands;     // Danh sách thương hiệu liên quan đến kết quả tìm kiếm
+
+    // Nếu có từ khóa tìm kiếm
     if (key) {
+      // Sử dụng text search của MongoDB để tìm kiếm theo từ khóa
       filters.$text = { $search: key };
 
+      // Lấy danh sách sản phẩm để trích xuất thông tin danh mục và thương hiệu
       const productsForCategories = await this.productModel
         .find(filters)
         .select('name category_id brand_id')
         .lean();
 
+      // Lọc thêm một lần nữa bằng regex để đảm bảo kết quả chính xác hơn với tiếng Việt
       const finalProductsForCategories = productsForCategories.filter((p) =>
         new RegExp(key, 'i').test(p.name),
       );
 
+      // Lấy danh sách ID thương hiệu duy nhất từ kết quả tìm kiếm
       const brandIds = [
         ...new Set(
           finalProductsForCategories.map((p) => p.brand_id?.toString()),
         ),
       ];
 
+      // Lấy danh sách ID danh mục duy nhất từ kết quả tìm kiếm
       const categoryIds = [
         ...new Set(
           finalProductsForCategories.map((p) => p.category_id.toString()),
         ),
       ];
 
+      // Lấy thông tin thương hiệu để hiển thị cho người dùng lọc
       brands = await this.brandModel
         .find({
           _id: { $in: brandIds },
@@ -91,6 +112,7 @@ export class ProductService {
         .select('_id name slug image')
         .lean();
 
+      // Lấy thông tin danh mục để hiển thị cho người dùng lọc
       categories = await this.categoryModel
         .find({
           _id: { $in: categoryIds },
@@ -100,8 +122,12 @@ export class ProductService {
         .select('_id name slug description image')
         .lean();
     }
+
+    // Xử lý bộ lọc theo danh mục
     if (category) {
+      // Tách chuỗi danh mục thành mảng các slug (có thể truyền nhiều slug cách bằng dấu cách)
       const categorySlugs = category.split(' ').filter((slug) => slug.trim());
+      // Kiểm tra danh mục có tồn tại trong database không
       const categoryExists = await this.categoryModel.find({
         slug: { $in: categorySlugs },
       });
@@ -111,12 +137,17 @@ export class ProductService {
       if (categoryExists.length !== categorySlugs.length) {
         throw new NotFoundException('Some categories not found');
       }
+      // Thêm điều kiện lọc theo danh mục vào bộ lọc
       filters.category_id = {
         $in: categoryExists.map((cat) => cat._id),
       };
     }
+
+    // Xử lý bộ lọc theo thương hiệu
     if (brand) {
+      // Tách chuỗi thương hiệu thành mảng các slug
       const brands = brand.split(' ');
+      // Kiểm tra thương hiệu có tồn tại trong database không
       const brandExists = await this.brandModel.find({
         slug: { $in: brands },
       });
@@ -126,38 +157,50 @@ export class ProductService {
       if (brandExists.length !== brands.length) {
         throw new NotFoundException('Some brands not found');
       }
+      // Thêm điều kiện lọc theo thương hiệu vào bộ lọc
       filters.brand_id = { $in: brandExists.map((brand) => brand._id) };
     }
 
+    // Thiết lập tiêu chí sắp xếp
     let sortCriteria: Record<string, any> = {};
-    let useTextScore = false;
+    let useTextScore = false; // Cờ đánh dấu có sử dụng điểm text search để sắp xếp không
 
+    // Xử lý các loại sắp xếp khác nhau
     if (sortOrder) {
       switch (sortOrder?.toLowerCase()) {
         case 'price-asc':
+          // Sắp xếp theo giá tăng dần
           sortCriteria = { final_price: 1 };
           break;
         case 'price-desc':
+          // Sắp xếp theo giá giảm dần
           sortCriteria = { final_price: -1 };
           break;
         case 'hot':
+          // Sắp xếp theo % giảm giá giảm dần (sản phẩm hot nhất)
           sortCriteria = { discount_percent: -1 };
           break;
         case 'new':
+          // Sắp xếp theo ngày tạo mới nhất
           sortCriteria = { created_at: -1 };
           break;
         default:
           sortCriteria = { created_at: -1 };
       }
     } else if (key) {
+      // Nếu có từ khóa và không chọn sắp xếp cụ thể -> sắp xếp theo độ liên quan (text score)
       useTextScore = true;
     } else {
+      // Mặc định sắp xếp theo ngày tạo mới nhất
       sortCriteria = { created_at: -1 };
     }
 
+    // Tạo query tìm kiếm với các bộ lọc
     const query = this.productModel.find(filters);
 
+    // Áp dụng sắp xếp và chọn các trường cần thiết
     if (useTextScore) {
+      // Nếu sử dụng text score: lấy thêm điểm textScore và sắp xếp theo điểm đó
       query
         .select({
           _id: 1,
@@ -171,10 +214,11 @@ export class ProductService {
           quantity: 1,
           is_active: 1,
           category_id: 1,
-          score: { $meta: 'textScore' },
+          score: { $meta: 'textScore' }, // Lấy điểm text search
         })
-        .sort({ score: { $meta: 'textScore' } });
+        .sort({ score: { $meta: 'textScore' } }); // Sắp xếp theo điểm text search
     } else {
+      // Sắp xếp theo tiêu chí đã chọn
       query
         .select(
           '_id name unit unit_price image_primary discount_percent final_price stock_status is_active category_id quantity',
@@ -182,14 +226,25 @@ export class ProductService {
         .sort(sortCriteria);
     }
 
+    // Thực thi query và lấy kết quả
     const products = await query.lean();
-    // thêm này để lọc theo tiếng chuẩn hơn xíu (trick lỏad)
+
+    // Lọc bổ sung bằng regex để đảm bảo kết quả chính xác hơn với tiếng Việt
+    // (MongoDB text search đôi khi không chính xác với tiếng Việt)
     const filteredProducts = key
       ? products.filter((p) => new RegExp(key, 'i').test(p.name))
       : products;
 
+    // Phân trang: lấy sản phẩm từ vị trí skip đến skip + actualLimit
     const paginatedProducts = filteredProducts.slice(skip, skip + actualLimit);
 
+    // Trả về kết quả bao gồm:
+    // - total: Tổng số sản phẩm trong trang hiện tại
+    // - skip: Số sản phẩm đã bỏ qua
+    // - actualLimit: Số sản phẩm tối đa mỗi trang
+    // - products: Danh sách sản phẩm
+    // - categories: Danh sách danh mục liên quan (để hiển thị bộ lọc)
+    // - brands: Danh sách thương hiệu liên quan (để hiển thị bộ lọc)
     return {
       total: paginatedProducts.length,
       skip,
